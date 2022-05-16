@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -45,6 +44,8 @@ struct MinHeap *createMinH(unsigned capacity) { //Priority Queue
   minHeap->capacity = capacity;
 
   minHeap->array = (struct MinHNode **)malloc(minHeap->capacity * sizeof(struct MinHNode *));
+  //Allocates array where we store pointers to minHNode srtuctures
+ 
   return minHeap;
 }
 
@@ -56,7 +57,7 @@ void swapMinHNode(struct MinHNode **a, struct MinHNode **b) {
 }
 
 // Heapify
-void minHeapify(struct MinHeap *minHeap, int idx) {
+void minHeapify(struct MinHeap *minHeap, int idx) {//reconstructs heap from smallest to largest
   int smallest = idx;
   int left = 2 * idx + 1;
   int right = 2 * idx + 2;
@@ -82,9 +83,9 @@ int checkSizeOne(struct MinHeap *minHeap) {
 struct MinHNode *extractMin(struct MinHeap *minHeap) {
   struct MinHNode *temp = minHeap->array[0];
   minHeap->array[0] = minHeap->array[minHeap->size - 1];
-
+ 
   --minHeap->size;
-  minHeapify(minHeap, 0);
+  minHeapify(minHeap, 0); // sorts heap again from smallest to largest
 
   return temp;
 }
@@ -114,10 +115,10 @@ int isLeaf(struct MinHNode *root) {
 }
 
 struct MinHeap *createAndBuildMinHeap(char item[], int freq[], int size) {
-  struct MinHeap *minHeap = createMinH(size);
+  struct MinHeap *minHeap = createMinH(size);// Creates Priority queue
 
   for (int i = 0; i < size; ++i)
-
+// Stores pointers to each minHNode structure in array.
        minHeap->array[i] = newNode(item[i], freq[i]);
 
   minHeap->size = size;
@@ -128,34 +129,35 @@ struct MinHeap *createAndBuildMinHeap(char item[], int freq[], int size) {
 
 struct MinHNode *buildHuffmanTree(char item[], int freq[], int size) {
   struct MinHNode *left, *right, *top;
-  struct MinHeap *minHeap = createAndBuildMinHeap(item, freq, size);
+  struct MinHeap *minHeap = createAndBuildMinHeap(item, freq, size); // creates the tree
 
-  while (!checkSizeOne(minHeap)) {
+  while (!checkSizeOne(minHeap)) { //Takes 2 smallest nodes and extracts from tree
     left = extractMin(minHeap);
     right = extractMin(minHeap);
-
+ // creates new node with the sum of frequencies of left and right
     top = newNode('$', left->freq + right->freq);
 
     top->left = left;
     top->right = right;
 
-    insertMinHeap(minHeap, top);
+    insertMinHeap(minHeap, top);// adds new node to the tree
   }
-  return extractMin(minHeap);
+  return extractMin(minHeap); // only one element in remains  priority queue so it will return the root
+of the tree
 }
 
 void printHCodes(struct MinHNode *root, int arr[], int top) {
-  if (root->left) {
+  if (root->left) {// checks if it has  left node
     arr[top] = 0;
     printHCodes(root->left, arr, top + 1);
   }
-  if (root->right) {
+  if (root->right) { // checks if it has right node
     arr[top] = 1;
     printHCodes(root->right, arr, top + 1);
   }
-  if (isLeaf(root)) {
+  if (isLeaf(root)) {// checks if it is a leaf node so we can print the letter and it's code
     printf("  %c   | ", root->item);
-    printArray(arr, top);
+    printArray(arr, top);//prints the code
   }
 }
 
@@ -174,16 +176,17 @@ int compact(char arr[], int freq[], int size)
 int j = 0;
 for (int i = 0; i < size; i++)
 {
-	if (freq[i] == 0)
-		continue;
+if (freq[i] == 0)
+continue;
 
-	freq[j] = freq[i];
-	arr[j] = arr[i];
+freq[j] = freq[i];
+arr[j] = arr[i];
       j++;
 
 }
 return j;
 }
+
 
 int main() 
 {
